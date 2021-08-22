@@ -1,13 +1,10 @@
 package com.mightyblockgram.mightyblockgram.repository;
 
-import com.mightyblockgram.mightyblockgram.dto.AccountDto;
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Repository

@@ -1,7 +1,6 @@
 package com.mightyblockgram.mightyblockgram.controller;
 
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
-import com.mightyblockgram.mightyblockgram.repository.PostRepository;
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
 import com.mightyblockgram.mightyblockgram.service.AccountService;
 import com.mightyblockgram.mightyblockgram.service.PostService;
@@ -14,11 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.DataInput;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RestController
