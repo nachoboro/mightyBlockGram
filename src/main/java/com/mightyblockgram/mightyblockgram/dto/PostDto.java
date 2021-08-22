@@ -12,8 +12,15 @@ public class PostDto {
     @JsonProperty("image_path")
     public String imagePath;
     @JsonProperty("upload_date")
-    public String  uploadDate;
+    public String uploadDate;
     @JsonProperty("account_id")
-    public int idAccount;
+    public int accountId;
     public int likes;
+
+    public PostDto(String description, String imagePath, String uploadDate, int accountId){
+        this.description = description;
+        this.imagePath = imagePath;
+        this.uploadDate = uploadDate;
+        this.accountId = accountId;
+    }
 }

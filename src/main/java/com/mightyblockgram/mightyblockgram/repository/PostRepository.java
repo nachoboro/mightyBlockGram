@@ -1,5 +1,6 @@
 package com.mightyblockgram.mightyblockgram.repository;
 
+import com.mightyblockgram.mightyblockgram.dto.AccountDto;
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Repository
 public class PostRepository {
 
+    private static final String GET_POST_BY_ID_QUERY = "SELECT post_id, description, image_path, upload_date, account_id from posts where post_id = ?";
     private static final String GET_ALL_POSTS_QUERY = "SELECT posts.post_id, posts.description, posts.image_path, posts.upload_date, posts.account_id, COUNT(like_id) as likes FROM posts LEFT JOIN (select like_id, post_id from likes where active = 1) as likes ON likes.post_id = posts.post_id GROUP BY post_id order by posts.upload_date desc";
     private static final String INSERT_NEW_POST_QUERY = "INSERT INTO posts (description, image_path, upload_date, account_id) values(?,?,?,?)";
 
@@ -24,11 +26,9 @@ public class PostRepository {
 
             List<PostDto> postList = new ArrayList<>();
             while (resultSet.next()) {
-                System.out.println("inside result set");
                 postList.add(new PostDto(resultSet.getString("description"), resultSet.getString("image_path"), resultSet.getString("upload_date"), resultSet.getInt("account_id"), resultSet.getInt("likes")));
             }
 
-            System.out.println(postList.size());
             connection.close();
             return postList;
         } catch (SQLException e) {
@@ -52,6 +52,27 @@ public class PostRepository {
 
             connection.close();
             return createdPost;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public PostDto getPost(int postId) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            PreparedStatement statement = connection.prepareStatement(GET_POST_BY_ID_QUERY);
+
+            statement.setInt(1, postId);
+            ResultSet resultSet = statement.executeQuery();
+
+            PostDto postDto = null;
+            while (resultSet.next()) {
+                postDto = new PostDto(resultSet.getString("description"), resultSet.getString("image_path"), resultSet.getString("upload_date"), resultSet.getInt("account_id"));
+            }
+
+            connection.close();
+            return postDto;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

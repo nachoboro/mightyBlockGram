@@ -36,7 +36,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postDtoList);
     }
 
-    @PostMapping("post")
+    @PostMapping("/post")
     public ResponseEntity createPost(@RequestParam MultipartFile image, @RequestParam Integer accountId, @RequestParam String description){
         if (image.isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Image cannot be null or empty");

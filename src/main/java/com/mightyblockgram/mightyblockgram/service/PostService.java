@@ -46,4 +46,8 @@ public class PostService {
         }
         return createdPost;
     }
+
+    public PostDto getPost(int postId) {
+        return postRepository.getPost(postId);
+    }
 }
