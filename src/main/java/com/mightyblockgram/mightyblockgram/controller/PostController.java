@@ -19,18 +19,18 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
-    @GetMapping("/post/list")
+    @GetMapping("/posts/list")
     public ResponseEntity getAllPosts(@RequestParam int offset, @RequestParam int limit) {
         List<PostDto> postDtoList =  postService.getPosts(offset,limit);
         return ResponseEntity.status(HttpStatus.OK).body(postDtoList);
     }
 
-    @PostMapping("/post")
+    @PostMapping("/posts")
     public ResponseEntity createPost(@RequestParam MultipartFile image, @RequestParam Integer accountId, @RequestParam String description){
         if (image.isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Image cannot be null or empty");

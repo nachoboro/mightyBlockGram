@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class LikeService {
 
     @Autowired
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
 
     public LikeDto getLike(int accountId, int postId) {
         return likeRepository.getLike(accountId, postId);

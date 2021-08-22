@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class PostService {
 
     @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+    protected SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 
     public List<PostDto> getPosts(int offset, int limit){
         List<PostDto> postList = postRepository.getAllPosts();

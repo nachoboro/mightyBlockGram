@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class LikeController {
 
     @Autowired
-    LikeService likeService;
+    private LikeService likeService;
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @PutMapping("/likes")
     public ResponseEntity createOrUpdateLike(@RequestParam int accountId, @RequestParam int postId){
