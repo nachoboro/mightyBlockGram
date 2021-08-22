@@ -15,4 +15,5 @@ public class PostDto {
     public String  uploadDate;
     @JsonProperty("account_id")
     public int idAccount;
+    public int likes;
 }

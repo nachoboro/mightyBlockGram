@@ -7,7 +7,7 @@ import java.sql.*;
 @Repository
 public class AccountRepository {
 
-    private static final String GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM account WHERE idAccount = ? ";
+    private static final String GET_ACCOUNT_BY_ID_QUERY = "SELECT * FROM accounts WHERE account_id = ? ";
 
     public AccountDto getAccount(Integer accountId) {
         try {

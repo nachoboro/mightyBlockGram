@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,10 @@ public class PostService {
 
     public List<PostDto> getPosts(int offset, int limit){
         List<PostDto> postList = postRepository.getAllPosts();
-        return postList.stream().skip(offset).limit(limit).collect(Collectors.toList());
+        if (postList != null){
+            return postList.stream().skip(offset).limit(limit).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     public PostDto savePost(MultipartFile image, int accountId, String description) {
