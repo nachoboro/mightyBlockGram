@@ -1,9 +1,13 @@
 package com.mightyblockgram.mightyblockgram.repository;
 
+import com.mightyblockgram.mightyblockgram.data_sources.DataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.LikeDto;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 @Repository
 public class LikeRepository {
@@ -12,9 +16,19 @@ public class LikeRepository {
     private static final String CREATE_LIKE_QUERY = "INSERT INTO likes (account_id, post_id, active) VALUES (?, ?, 1)";
     private static final String UPDATE_LIKE_QUERY = "UPDATE likes set active = 1 - active where account_id = ? and post_id = ?";
 
+    private DataSourceFactory dataSourceFactory;
+
+    public LikeRepository(DataSourceFactory dataSourceFactory){
+        this.dataSourceFactory = dataSourceFactory;
+    }
+
     public LikeDto getLike(int accountId, int postId) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(GET_LIKE_BY_POST_AND_ACCOUNT_ID_QUERY);
 
             statement.setInt(1, accountId);
@@ -22,40 +36,44 @@ public class LikeRepository {
             ResultSet resultSet = statement.executeQuery();
 
             LikeDto likeDto = null;
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 likeDto = new LikeDto(resultSet.getInt("account_id"), resultSet.getInt("post_id"), resultSet.getBoolean("active"));
             }
 
             connection.close();
             return likeDto;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public LikeDto createLike(int accountId, int postId) {
+    public void saveLike(int accountId, int postId) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE_LIKE_QUERY);
 
             statement.setInt(1, accountId);
             statement.setInt(2, postId);
             statement.executeUpdate();
 
-            LikeDto likeDto = new LikeDto(postId, accountId, true);
-
             connection.close();
-            return likeDto;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
 
     public void updateLike(int accountId, int postId) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(UPDATE_LIKE_QUERY);
 
             statement.setInt(1, accountId);
@@ -63,7 +81,7 @@ public class LikeRepository {
             statement.executeUpdate();
 
             connection.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

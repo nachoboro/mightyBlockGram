@@ -32,9 +32,6 @@ public class PostController {
 
     @PostMapping("/posts")
     public ResponseEntity createPost(@RequestParam MultipartFile image, @RequestParam Integer accountId, @RequestParam String description){
-        if (image.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Image cannot be null or empty");
-        }
         AccountDto accountDto = accountService.getAccount(accountId);
         if (accountDto == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account does not exist");

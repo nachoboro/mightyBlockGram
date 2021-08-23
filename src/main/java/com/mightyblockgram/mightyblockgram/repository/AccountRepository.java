@@ -1,7 +1,11 @@
 package com.mightyblockgram.mightyblockgram.repository;
+import com.mightyblockgram.mightyblockgram.data_sources.DataSourceFactory;
+import com.mightyblockgram.mightyblockgram.data_sources.MySqlDataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 @Repository
@@ -11,10 +15,19 @@ public class AccountRepository {
     private static final String GET_ACCOUNT_BY_ID_QUERY = "SELECT name, pass FROM accounts WHERE account_id = ? ";
     private static final String CREATE_ACCOUNT_QUERY = "INSERT INTO accounts (name, pass) values (?, ?)";
 
+    protected DataSourceFactory dataSourceFactory;
 
-    public AccountDto getAccount(String userName) {
+    public AccountRepository(DataSourceFactory dataSourceFactory){
+        this.dataSourceFactory = dataSourceFactory;
+    }
+
+    public AccountDto getAccountByName(String userName) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(GET_ACCOUNT_BY_NAME_QUERY);
 
             statement.setString(1, userName);
@@ -27,7 +40,7 @@ public class AccountRepository {
 
             connection.close();
             return accountDto;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -35,7 +48,11 @@ public class AccountRepository {
 
     public AccountDto getAccountById(Integer accountId) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(GET_ACCOUNT_BY_ID_QUERY);
 
             statement.setInt(1, accountId);
@@ -48,7 +65,7 @@ public class AccountRepository {
 
             connection.close();
             return accountDto;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -56,7 +73,11 @@ public class AccountRepository {
 
     public void saveUser(String user, String hashedPass) {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MightyBlockGram", "nacho", "nacho");
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE_ACCOUNT_QUERY);
 
             statement.setString(1, user);
@@ -64,7 +85,7 @@ public class AccountRepository {
             statement.executeUpdate();
 
             connection.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

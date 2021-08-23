@@ -1,5 +1,6 @@
 package com.mightyblockgram.mightyblockgram.service;
 
+import com.mightyblockgram.mightyblockgram.data_sources.MySqlDataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
 import com.mightyblockgram.mightyblockgram.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,7 @@ import java.util.ArrayList;
 @Service
 public class AccountService implements UserDetailsService {
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private AccountRepository accountRepository = new AccountRepository(new MySqlDataSourceFactory());
 
     public AccountDto getAccount(Integer accountId){
         return accountRepository.getAccountById(accountId);
@@ -24,7 +24,7 @@ public class AccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        AccountDto accountDto = accountRepository.getAccount(userName);
+        AccountDto accountDto = accountRepository.getAccountByName(userName);
         String username = accountDto.getUsername();
         String pass = accountDto.getPassword();
         return new User(username, pass, new ArrayList<>());
