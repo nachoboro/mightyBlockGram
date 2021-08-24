@@ -40,19 +40,32 @@ public class LikeRepositoryTest {
     }
 
     @Test
-    public void whenUpdatingLikeThenActiveShouldBeToggled(){
-        LikeDto currentLike = likeRepository.getLike(2,2);
-        likeRepository.updateLike(2, 2);
-        LikeDto newLike = likeRepository.getLike(2,2);
-        assertNotEquals(currentLike.isActive(), newLike.isActive());
+    public void whenLikingPostThenActiveShouldBeSetToTrue(){
+        likeRepository.likePost(4, 8);
+        LikeDto newLike = likeRepository.getLike(4,8);
+        assertTrue(newLike.isActive());
     }
 
     @Test
-    public void whenUpdatingLikeThrowsExceptionThenNoResultsShouldBeInserted(){
-        LikeDto currentLike = likeRepository.getLike(2,2);
+    public void whenLikingPostThrowsExceptionThenNoResultsShouldBeUpdated(){
         LikeRepository likeRepositoryMock = new LikeRepository(null);
-        likeRepositoryMock.updateLike(2, 2);
+        likeRepositoryMock.likePost(4, 8);
+        LikeDto newLike = likeRepository.getLike(4,8);
+        assertFalse(newLike.isActive());
+    }
+
+    @Test
+    public void whenUnlikingPostThenActiveShouldBeSetToFalse(){
+        likeRepository.unlikePost(2, 2);
         LikeDto newLike = likeRepository.getLike(2,2);
-        assertEquals(currentLike.isActive(), newLike.isActive());
+        assertFalse(newLike.isActive());
+    }
+
+    @Test
+    public void whenUnlikingPostThrowsExceptionThenNoResultsShouldBeUpdated(){
+        LikeRepository likeRepositoryMock = new LikeRepository(null);
+        likeRepositoryMock.unlikePost(2, 2);
+        LikeDto newLike = likeRepository.getLike(2,2);
+        assertTrue(newLike.isActive());
     }
 }

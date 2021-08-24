@@ -103,4 +103,13 @@ public class AccountControllerTest {
         ResponseEntity result = accountController.createAccount(loginAccountDto);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }
+
+    @Test
+    public void whenCreatingAnAlreadyExistingUserBadRequestShouldBeReturned(){
+        AccountDto loginAccountDto = new AccountDto("user", "pass");
+        doReturn(loginAccountDto).when(accountService).getAccountByName("user");
+        ResponseEntity result = accountController.createAccount(loginAccountDto);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+
+    }
 }

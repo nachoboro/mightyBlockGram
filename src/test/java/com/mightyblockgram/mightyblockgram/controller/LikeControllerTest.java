@@ -6,6 +6,7 @@ import com.mightyblockgram.mightyblockgram.dto.PostDto;
 import com.mightyblockgram.mightyblockgram.service.AccountService;
 import com.mightyblockgram.mightyblockgram.service.LikeService;
 import com.mightyblockgram.mightyblockgram.service.PostService;
+import com.mightyblockgram.mightyblockgram.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -29,6 +30,9 @@ public class LikeControllerTest {
     @Mock
     private PostService postService;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
     @InjectMocks
     private LikeController likeController;
 
@@ -38,35 +42,86 @@ public class LikeControllerTest {
     }
 
     @Test
-    public void whenCreatingOrUpdatingLikeWithInvalidAccountThenBadRequestShouldBeReturned(){
-        doReturn(null).when(accountService).getAccount(anyInt());
-        ResponseEntity result = likeController.createOrUpdateLike(2,4);
+    public void whenLikingWithInvalidAccountThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(null).when(accountService).getAccountByName(eq("test"));
+        ResponseEntity result = likeController.likePost(2,"token");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
-    public void whenCreatingOrUpdatingLikeWithInvalidPostThenBadRequestShouldBeReturned(){
-        doReturn(new AccountDto("user", "pass")).when(accountService).getAccount(anyInt());
+    public void whenLikingInvalidPostThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
         doReturn(null).when(postService).getPost(anyInt());
-        ResponseEntity result = likeController.createOrUpdateLike(2,4);
+        ResponseEntity result = likeController.likePost(2,"token");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
     public void whenCreatingLikeThenCreatedStatusShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
         doReturn(new PostDto()).when(postService).getPost(anyInt());
-        doReturn(new AccountDto("user", "pass")).when(accountService).getAccount(anyInt());
-        doReturn(null).when(likeService).getLike(anyInt(), anyInt());
-        ResponseEntity result = likeController.createOrUpdateLike(2,4);
+        doReturn(null).when(likeService).getLike(anyString(), anyInt());
+        ResponseEntity result = likeController.likePost(2,"token");
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     @Test
-    public void whenUpdatingLikeThenOkStatusShouldBeReturned(){
+    public void whenLikingUnlikedPostThenOkShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
         doReturn(new PostDto()).when(postService).getPost(anyInt());
-        doReturn(new AccountDto("user", "pass")).when(accountService).getAccount(anyInt());
-        doReturn(new LikeDto(2,4,true)).when(likeService).getLike(anyInt(), anyInt());
-        ResponseEntity result = likeController.createOrUpdateLike(2,4);
+        doReturn(new LikeDto(2,4,false)).when(likeService).getLike(anyString(), anyInt());
+        ResponseEntity result = likeController.likePost(2,"token");
         assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    public void whenLikingLikedPostThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
+        doReturn(new PostDto()).when(postService).getPost(anyInt());
+        doReturn(new LikeDto(2,4,true)).when(likeService).getLike(anyString(), anyInt());
+        ResponseEntity result = likeController.likePost(2,"token");
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void whenUnlikingUnlikedPostThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
+        doReturn(new PostDto()).when(postService).getPost(anyInt());
+        doReturn(new LikeDto(2,4,false)).when(likeService).getLike(anyString(), anyInt());
+        ResponseEntity result = likeController.unlikePost(2,"token");
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void whenUnlikingLikedPostThenOkShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
+        doReturn(new PostDto()).when(postService).getPost(anyInt());
+        doReturn(new LikeDto(2,4,true)).when(likeService).getLike(anyString(), anyInt());
+        ResponseEntity result = likeController.unlikePost(2,"token");
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    public void whenUnlikingWithInvalidAccountThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(null).when(accountService).getAccountByName(eq("test"));
+        ResponseEntity result = likeController.unlikePost(2,"token");
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void whenUnlikingInvalidPostThenBadRequestShouldBeReturned(){
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("user", "pass")).when(accountService).getAccountByName(eq("test"));
+        doReturn(null).when(postService).getPost(anyInt());
+        ResponseEntity result = likeController.unlikePost(2,"token");
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 }

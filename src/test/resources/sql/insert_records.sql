@@ -19,3 +19,4 @@ INSERT INTO `likes` (`like_id`,`account_id`,`post_id`,`active`) VALUES (3,2,1,0)
 INSERT INTO `likes` (`like_id`,`account_id`,`post_id`,`active`) VALUES (4,2,2,1);
 INSERT INTO `likes` (`like_id`,`account_id`,`post_id`,`active`) VALUES (5,2,1,0);
 INSERT INTO `likes` (`like_id`,`account_id`,`post_id`,`active`) VALUES (6,4,9,1);
+INSERT INTO `likes` (`like_id`,`account_id`,`post_id`,`active`) VALUES (7,4,8,0);

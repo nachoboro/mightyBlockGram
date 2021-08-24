@@ -39,11 +39,10 @@ public class PostRepositoryTest {
 
     @Test
     public void whenSavingPostsThrowsExceptionThenNoPostShouldBeInserted(){
-        int previousSize = postRepository.getAllPosts().size();
         PostRepository postRepositoryMock = new PostRepository(null);
         postRepositoryMock.savePost("path", 4, "description", "2021-08-22");
         int actualSize = postRepository.getAllPosts().size();
-        assertEquals(previousSize, actualSize);
+        assertEquals(9, actualSize);
     }
 
     @Test

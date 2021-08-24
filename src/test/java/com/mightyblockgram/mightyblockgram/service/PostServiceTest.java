@@ -1,6 +1,7 @@
 package com.mightyblockgram.mightyblockgram.service;
 
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
+import com.mightyblockgram.mightyblockgram.models.Account;
 import com.mightyblockgram.mightyblockgram.repository.AccountRepository;
 import com.mightyblockgram.mightyblockgram.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,9 @@ public class PostServiceTest {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
 
     @InjectMocks
     private PostService postService;
@@ -74,7 +78,9 @@ public class PostServiceTest {
     @Test
     public void whenSavingPostThenPostRepositoryShouldBeCalledCorrectly(){
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test.jpg".getBytes());
-        postService.savePost(file, 2, "description");
+        Account account = new Account(2, "test", "test");
+        doReturn(account).when(accountRepository).getAccountByName("test");
+        postService.savePost(file, "description", "test");
         verify(postRepository, times(1)).savePost(anyString(), eq(2), eq("description"), anyString());
     }
 

@@ -29,6 +29,8 @@ This is a POST method and only requires a body with a username and password
 }
 ```
 
+---
+
 ### Logging in
 Once you have created your account the next step is logging in, use the next endpoint:
 
@@ -50,7 +52,10 @@ This endpoint will respond with a json web token that you will need to send as a
 {
     "token": "token"
 }
-``` 
+```
+
+---
+ 
 ### Authorizing subsequent requests
 From now on, every request should contain an authentication header like the following:
 ```
@@ -58,17 +63,20 @@ From now on, every request should contain an authentication header like the foll
 ```
 with the token being the token you got as the login response, else the application will return forbidden for each of the requests below.
 
+---
 
 ### Getting all posts
 If you want to browse through all posts then you should use the next GET endpoint:
 
 ```
-/posts/list?offset={offset}&limit={limit}
+/posts?offset={offset}&limit={limit}
 ```
 
 These GET will return a list of posts, with their respective description, account id, upload date and the path to where the image is saved, ordered by upload date from newest to oldest and their current likes.
 Offset and limit parameters are used to see which page we are currently in, if you want to get the first 6 posts, offset should be 0 and limit 6.
 If you are interested in the second page of 6 posts, offset should be 6 and limit 6 as well.
+
+---
 
 ### Creating a post
 To create a post, use the next POST endpoint: 
@@ -78,7 +86,7 @@ To create a post, use the next POST endpoint:
 ```
 
 This POST request creates a post for an account, its body should be a type of form-data, including
-the post's image, the description as text and the id of the account. It will respond with the created post
+the post's image, and the post's description as text. It will respond with the created post
 with its description, account id, image path, likes and upload date
 
 ```
@@ -91,11 +99,20 @@ with its description, account id, image path, likes and upload date
 }
 ```
 
-### Liking or unliking a post
-In order to like or unlike an already liked post, you should use the next PUT endpoint:
+---
+
+### Liking a post
+In order to like a post, you should use the next PUT endpoint:
 
 ```
-/likes?accountId={account_id}&postId={post_id}
+/posts/{postId}/like
 ```
-The account and post id passed should both exist already, this will like a post if the account hasn't liked the post already
-and it will toggle the "like" status from the post if it is already liked (liking an already liked post will unlike it and liking an unliked post will relike it);
+The post id passed should exist already, this will like a post if the account hasn't liked the post already.
+
+### Unliking a post
+In order to unlike a post, you should use the next PUT endpoint:
+
+```
+/posts/{postId}/unlike
+```
+The post id passed should exist already, this will unlike a post if the account hasn't unliked the post already.

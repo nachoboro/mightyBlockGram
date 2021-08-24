@@ -2,6 +2,7 @@ package com.mightyblockgram.mightyblockgram.repository;
 
 import com.mightyblockgram.mightyblockgram.data_sources.H2DataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
+import com.mightyblockgram.mightyblockgram.models.Account;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,14 +14,14 @@ public class AccountRepositoryTest {
 
     @Test
     public void whenGettingAccountByNameThenAccountDtoShouldBeReturned(){
-        AccountDto result = accountRepository.getAccountByName("Nacho");
+        Account result = accountRepository.getAccountByName("Nacho");
         assertEquals("Nacho", result.getUsername());
         assertEquals("Nacho", result.getPassword());
     }
 
     @Test
     public void whenGettingAccountByNameThatDoesntExistThenNullAccountDtoShouldBeReturned(){
-        AccountDto result = accountRepository.getAccountByName("DoesNotExist");
+        Account result = accountRepository.getAccountByName("DoesNotExist");
         assertNull(result);
     }
 
@@ -32,14 +33,14 @@ public class AccountRepositoryTest {
 
     @Test
     public void whenGettingAccountByIdThenAccountDtoShouldBeReturned(){
-        AccountDto result = accountRepository.getAccountById(2);
+        Account result = accountRepository.getAccountById(2);
         assertEquals("Nacho", result.getUsername());
         assertEquals("Nacho", result.getPassword());
     }
 
     @Test
     public void whenGettingAccountByIdThatDoesntExistThenAccountDtoShouldBeReturned(){
-        AccountDto result = accountRepository.getAccountById(75);
+        Account result = accountRepository.getAccountById(75);
         assertNull(result);
     }
 
@@ -52,7 +53,7 @@ public class AccountRepositoryTest {
     @Test
     public void whenSavingUserThenUserShouldBeInsertedInDB(){
         accountRepository.saveUser("newUser", "hashedPass");
-        AccountDto newUser = accountRepository.getAccountByName("newUser");
+        Account newUser = accountRepository.getAccountByName("newUser");
         assertEquals("hashedPass", newUser.getPassword());
     }
 
@@ -60,7 +61,7 @@ public class AccountRepositoryTest {
     public void whenSavingUserThrowsExceptionThenNoResultsShouldBeInserted(){
         AccountRepository accountRepositoryMock = new AccountRepository(null);
         accountRepositoryMock.saveUser("newUser", "hashedPass");
-        AccountDto newUser = accountRepository.getAccountByName("newUser");
+        Account newUser = accountRepository.getAccountByName("newUser");
         assertNull(newUser);
     }
 }

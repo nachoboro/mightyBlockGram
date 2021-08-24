@@ -2,6 +2,7 @@ package com.mightyblockgram.mightyblockgram.repository;
 import com.mightyblockgram.mightyblockgram.data_sources.DataSourceFactory;
 import com.mightyblockgram.mightyblockgram.data_sources.MySqlDataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
+import com.mightyblockgram.mightyblockgram.models.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +12,8 @@ import java.sql.*;
 @Repository
 public class AccountRepository {
 
-    private static final String GET_ACCOUNT_BY_NAME_QUERY = "SELECT name, pass FROM accounts WHERE name = ? ";
-    private static final String GET_ACCOUNT_BY_ID_QUERY = "SELECT name, pass FROM accounts WHERE account_id = ? ";
+    private static final String GET_ACCOUNT_BY_NAME_QUERY = "SELECT account_id, name, pass FROM accounts WHERE name = ? ";
+    private static final String GET_ACCOUNT_BY_ID_QUERY = "SELECT account_id, name, pass FROM accounts WHERE account_id = ? ";
     private static final String CREATE_ACCOUNT_QUERY = "INSERT INTO accounts (name, pass) values (?, ?)";
 
     protected DataSourceFactory dataSourceFactory;
@@ -21,7 +22,7 @@ public class AccountRepository {
         this.dataSourceFactory = dataSourceFactory;
     }
 
-    public AccountDto getAccountByName(String userName) {
+    public Account getAccountByName(String userName) {
         try {
             DataSource ds = dataSourceFactory.getDataSource();
             if (ds == null){
@@ -33,20 +34,20 @@ public class AccountRepository {
             statement.setString(1, userName);
             ResultSet resultSet = statement.executeQuery();
 
-            AccountDto accountDto = null;
+            Account account = null;
             if (resultSet.next()) {
-                accountDto = new AccountDto(resultSet.getString("name"), resultSet.getString("pass"));
+                account = new Account(resultSet.getInt("account_id"), resultSet.getString("name"), resultSet.getString("pass"));
             }
 
             connection.close();
-            return accountDto;
+            return account;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public AccountDto getAccountById(Integer accountId) {
+    public Account getAccountById(Integer accountId) {
         try {
             DataSource ds = dataSourceFactory.getDataSource();
             if (ds == null){
@@ -58,13 +59,13 @@ public class AccountRepository {
             statement.setInt(1, accountId);
             ResultSet resultSet = statement.executeQuery();
 
-            AccountDto accountDto = null;
+            Account account = null;
             if (resultSet.next()) {
-                accountDto = new AccountDto(resultSet.getString("name"), resultSet.getString("pass"));
+                account = new Account(resultSet.getInt("account_id"), resultSet.getString("name"), resultSet.getString("pass"));
             }
 
             connection.close();
-            return accountDto;
+            return account;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

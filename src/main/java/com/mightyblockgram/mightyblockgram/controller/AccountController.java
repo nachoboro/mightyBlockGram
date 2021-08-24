@@ -51,6 +51,10 @@ public class AccountController {
             if (password == null || password.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password cannot be null or empty");
             }
+            AccountDto existingAccount = accountService.getAccountByName(username);
+            if (existingAccount != null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
+            }
             accountService.createUser(username, password);
             return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully, please login");
         } catch (Exception e) {

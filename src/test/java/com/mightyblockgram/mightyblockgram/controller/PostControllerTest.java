@@ -4,6 +4,7 @@ import com.mightyblockgram.mightyblockgram.dto.AccountDto;
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
 import com.mightyblockgram.mightyblockgram.service.AccountService;
 import com.mightyblockgram.mightyblockgram.service.PostService;
+import com.mightyblockgram.mightyblockgram.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +30,9 @@ public class PostControllerTest {
     @Mock
     private AccountService accountService;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
     @InjectMocks
     private PostController postController;
 
@@ -50,21 +54,21 @@ public class PostControllerTest {
     @Test
     public void whenCreatingPostWithInvalidAccountThenBadRequestShouldBeReturned(){
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test.jpg".getBytes());
-        Integer accountId = 87;
         String description = "desc";
-        doReturn(null).when(accountService).getAccount(87);
-        ResponseEntity result = postController.createPost(file,accountId,description);
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(null).when(accountService).getAccountById(87);
+        ResponseEntity result = postController.createPost(file, description,"token");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
     public void whenCreatingAPostThenPostShouldBeReturned(){
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test.jpg".getBytes());
-        Integer accountId = 87;
         String description = "desc";
-        doReturn(new AccountDto("test", "test")).when(accountService).getAccount(87);
-        doReturn(new PostDto("desc", "path", "2021-08-22", 87, 3)).when(postService).savePost(any(), anyInt(), anyString());
-        ResponseEntity result = postController.createPost(file,accountId,description);
+        doReturn("test").when(jwtUtil).extractUsername(anyString());
+        doReturn(new AccountDto("test", "test")).when(accountService).getAccountByName("test");
+        doReturn(new PostDto("desc", "path", "2021-08-22", 87, 3)).when(postService).savePost(any(), anyString(), anyString());
+        ResponseEntity result = postController.createPost(file, description,"token");
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         PostDto bodyPostDto = (PostDto) result.getBody();
         assertEquals("desc", bodyPostDto.getDescription());

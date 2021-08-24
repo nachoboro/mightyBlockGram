@@ -2,6 +2,8 @@ package com.mightyblockgram.mightyblockgram.service;
 
 import com.mightyblockgram.mightyblockgram.data_sources.MySqlDataSourceFactory;
 import com.mightyblockgram.mightyblockgram.dto.PostDto;
+import com.mightyblockgram.mightyblockgram.models.Account;
+import com.mightyblockgram.mightyblockgram.repository.AccountRepository;
 import com.mightyblockgram.mightyblockgram.repository.LikeRepository;
 import com.mightyblockgram.mightyblockgram.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private PostRepository postRepository = new PostRepository(new MySqlDataSourceFactory());
+    private AccountRepository accountRepository = new AccountRepository(new MySqlDataSourceFactory());
 
     protected SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
 
@@ -31,12 +34,13 @@ public class PostService {
         return new ArrayList<>();
     }
 
-    public PostDto savePost(MultipartFile image, int accountId, String description) {
+    public PostDto savePost(MultipartFile image, String description, String username) {
+        Account account = accountRepository.getAccountByName(username);
         String currentDirectory = System.getProperty("user.dir");
         String formattedDate = formatter.format(new Date());
-        String filePath = String.format("%s/%s/%s_%s", currentDirectory, "images", accountId, formattedDate);
+        String filePath = String.format("%s/%s/%s_%s", currentDirectory, "images", account.getAccountId(), formattedDate);
         File fileToSave = new File(filePath);
-        PostDto createdPost = postRepository.savePost(filePath, accountId, description, formattedDate);
+        PostDto createdPost = postRepository.savePost(filePath, account.getAccountId(), description, formattedDate);
         try {
             image.transferTo(fileToSave);
         } catch (IOException e){

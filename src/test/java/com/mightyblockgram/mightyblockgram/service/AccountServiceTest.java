@@ -1,6 +1,7 @@
 package com.mightyblockgram.mightyblockgram.service;
 
 import com.mightyblockgram.mightyblockgram.dto.AccountDto;
+import com.mightyblockgram.mightyblockgram.models.Account;
 import com.mightyblockgram.mightyblockgram.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,11 @@ public class AccountServiceTest {
 
     @Test
     public void whenLoadingUserByUsernameThenUserShouldBeReturned(){
-        AccountDto expectedAccountDto = new AccountDto("Nacho", "HashedPass");
-        doReturn(expectedAccountDto).when(accountRepository).getAccountByName("Nacho");
+        Account account = new Account(2, "Nacho", "HashedPass");
+        doReturn(account).when(accountRepository).getAccountByName("Nacho");
         UserDetails result = accountService.loadUserByUsername("Nacho");
 
-        User expectedUser = new User(expectedAccountDto.getUsername(), expectedAccountDto.getPassword(), new ArrayList<>());
+        User expectedUser = new User(account.getUsername(), account.getPassword(), new ArrayList<>());
 
         assertEquals(expectedUser.getUsername(), result.getUsername());
         assertEquals(expectedUser.getPassword(), result.getPassword());
@@ -50,9 +51,23 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void whenGettingAccountByNameThenPostRepositoryShouldBeCalledCorrectly(){
-        accountService.getAccount(2);
+    public void whenGettingAccountByIdThenPostRepositoryShouldBeCalledCorrectly(){
+        Account account = new Account(2, "test", "test");
+        doReturn(account).when(accountRepository).getAccountById(anyInt());
+        AccountDto result = accountService.getAccountById(2);
         verify(accountRepository, times(1)).getAccountById(eq(2));
+        assertEquals("test", result.getUsername());
+        assertEquals("test", result.getPassword());
+    }
+
+    @Test
+    public void whenGettingAccountByNameThenPostRepositoryShouldBeCalledCorrectly(){
+        Account account = new Account(2, "test", "test");
+        doReturn(account).when(accountRepository).getAccountByName(anyString());
+        AccountDto result = accountService.getAccountByName("test");
+        verify(accountRepository, times(1)).getAccountByName(eq("test"));
+        assertEquals("test", result.getUsername());
+        assertEquals("test", result.getPassword());
     }
 
 }

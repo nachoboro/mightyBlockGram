@@ -14,7 +14,8 @@ public class LikeRepository {
 
     private static final String GET_LIKE_BY_POST_AND_ACCOUNT_ID_QUERY = "SELECT * FROM likes WHERE account_id = ? and post_id = ? ";
     private static final String CREATE_LIKE_QUERY = "INSERT INTO likes (account_id, post_id, active) VALUES (?, ?, 1)";
-    private static final String UPDATE_LIKE_QUERY = "UPDATE likes set active = 1 - active where account_id = ? and post_id = ?";
+    private static final String LIKE_POST_QUERY = "UPDATE likes set active = 1 where account_id = ? and post_id = ?";
+    private static final String UNLIKE_POST_QUERY = "UPDATE likes set active = 0 where account_id = ? and post_id = ?";
 
     private DataSourceFactory dataSourceFactory;
 
@@ -67,14 +68,33 @@ public class LikeRepository {
         }
     }
 
-    public void updateLike(int accountId, int postId) {
+    public void likePost(int accountId, int postId) {
         try {
             DataSource ds = dataSourceFactory.getDataSource();
             if (ds == null){
                 ds = dataSourceFactory.initDataSource();
             }
             Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(UPDATE_LIKE_QUERY);
+            PreparedStatement statement = connection.prepareStatement(LIKE_POST_QUERY);
+
+            statement.setInt(1, accountId);
+            statement.setInt(2, postId);
+            statement.executeUpdate();
+
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unlikePost(int accountId, int postId) {
+        try {
+            DataSource ds = dataSourceFactory.getDataSource();
+            if (ds == null){
+                ds = dataSourceFactory.initDataSource();
+            }
+            Connection connection = ds.getConnection();
+            PreparedStatement statement = connection.prepareStatement(UNLIKE_POST_QUERY);
 
             statement.setInt(1, accountId);
             statement.setInt(2, postId);
