@@ -27,7 +27,7 @@ public class PostController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/posts")
-    public ResponseEntity getAllPosts(@RequestParam int offset, @RequestParam int limit) {
+    public ResponseEntity getAllPosts(@RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "10") int limit) {
         List<PostDto> postDtoList =  postService.getPosts(offset,limit);
         return ResponseEntity.status(HttpStatus.OK).body(postDtoList);
     }
