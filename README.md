@@ -6,9 +6,8 @@ logging in, creating and getting all posts and liking/unliking them.
 
 ---
 
-## Setting up the database
-This project uses a mysql database with 3 tables, you should create it yourself in your local mysql under the name of MightyBlockGram on port 3307, then,  you can check the
-table creation and insert some test records with the files in https://github.com/nachoboro/mightyBlockGram/tree/master/src/test/resources/sql
+## Setting up the environment
+After cloning the project, execute docker-compose up -d in order to run the project
 
 ---
 
@@ -74,7 +73,7 @@ If you want to browse through all posts then you should use the next GET endpoin
 
 These GET will return a list of posts, with their respective description, account id, upload date and the path to where the image is saved, ordered by upload date from newest to oldest and their current likes.
 Offset and limit parameters are used to see which page we are currently in, if you want to get the first 6 posts, offset should be 0 and limit 6.
-If you are interested in the second page of 6 posts, offset should be 6 and limit 6 as well.
+If you are interested in the second page of 6 posts, offset should be 6 and limit 6 as well. (In case offset and limit parameters are not passed, default values are set to 0 and 10 respectively)
 
 ---
 
