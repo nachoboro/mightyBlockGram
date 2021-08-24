@@ -7,7 +7,7 @@ logging in, creating and getting all posts and liking/unliking them.
 ---
 
 ## Setting up the database
-This project uses a mysql database with 3 tables, you should create it yourself in your local mysql under the name of MightyBlockGram on port 3306, then,  you can check the
+This project uses a mysql database with 3 tables, you should create it yourself in your local mysql under the name of MightyBlockGram on port 3307, then,  you can check the
 table creation and insert some test records with the files in https://github.com/nachoboro/mightyBlockGram/tree/master/src/test/resources/sql
 
 ---
