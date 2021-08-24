@@ -15,6 +15,7 @@ services:
       - my-net
   app:
     container_name: app
+    image: nachoboro2402/mightyblock
     ports:
       - "8080:8080"
     env_file:
